@@ -1,0 +1,59 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  /* Dynamic viewport height para móviles */
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.app-header {
+  background-color: #646cff;
+  color: white;
+  padding: 12px 16px;
+  padding-top: max(12px, env(safe-area-inset-top));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  flex-shrink: 0;
+  min-height: 50px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+  /* Espacio para el menú inferior + safe area */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  background-color: #f5f5f5;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  /* Permite que el flex funcione correctamente */
+}
+
+/* Cuando el mapa está activo, quitar el padding */
+.app-main:has(.map-view) {
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-main {
+    background-color: #1a1a1a;
+  }
+
+  .app-header {
+    background-color: #535bf2;
+  }
+}

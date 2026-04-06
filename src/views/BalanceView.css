@@ -1,0 +1,655 @@
+.transaction-form input[type="date"] {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #d0d7e2;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: border-color 0.2s;
+  color: #333;
+}
+.transaction-form input[type="date"]:focus {
+  outline: none;
+  border-color: #007bff;
+  background: #fff;
+}
+
+/* Botón editar transacción */
+.btn-edit-transaction {
+  background: #ffc107;
+  color: #333;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background 0.2s;
+}
+.btn-edit-transaction:hover {
+  background: #e0a800;
+  color: #222;
+}
+/* Transacción - Formulario */
+.transaction-form {
+  background: #fff;
+  border: 1.5px solid #e0e7ef;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  margin: 0 auto 2rem auto;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.transaction-form h3 {
+  margin-top: 0;
+  color: #007bff;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.transaction-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+  color: #333;
+  gap: 0.3rem;
+}
+.transaction-form input,
+.transaction-form select {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #d0d7e2;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  margin-top: 0.1rem;
+  background: #f8fafc;
+  transition: border-color 0.2s;
+  color: #000;
+}
+.transaction-form input:focus,
+.transaction-form select:focus {
+  outline: none;
+  border-color: #007bff;
+  background: #fff;
+}
+.transaction-form .form-actions {
+  display: flex;
+  gap: 0.7rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+.transaction-form .btn-confirm {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.transaction-form .btn-confirm:disabled {
+  background: #b3d1fa;
+  cursor: not-allowed;
+}
+.transaction-form .btn-confirm:hover:not(:disabled) {
+  background: #0056b3;
+}
+.transaction-form .btn-cancel {
+  background: #f3f3f3;
+  color: #666;
+  border: 1px solid #d0d7e2;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.transaction-form .btn-cancel:hover {
+  background: #e0e7ef;
+  color: #333;
+}
+
+/* Botones de acción al pie */
+.balance-action-footer {
+  margin-top: 2.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+.balance-action-footer .btn-confirm {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.balance-action-footer .btn-confirm:hover {
+  background: #218838;
+}
+.balance-action-footer .btn-cancel {
+  background: #f3f3f3;
+  color: #666;
+  border: 1px solid #d0d7e2;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.balance-action-footer .btn-cancel:hover {
+  background: #e0e7ef;
+  color: #333;
+}
+/* BalanceView.css */
+
+.balance-view {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Error Banner */
+.balance-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 0.5rem;
+  color: #c33;
+  margin-bottom: 1rem;
+}
+
+.error-icon {
+  font-size: 1.5rem;
+}
+
+.error-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #c33;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.error-close:hover {
+  color: #a22;
+}
+
+/* Loading */
+.balance-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem;
+  color: #666;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #eee;
+  border-top-color: #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Accounts Section */
+.accounts-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.accounts-section h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 0.5rem;
+}
+
+.accounts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* Account Card */
+.account-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.account-card:hover:not(.add-account-card) {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.account-card-header {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  padding: 1rem;
+}
+
+.account-card-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.account-card-body {
+  padding: 1.5rem;
+}
+
+.account-balance {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.balance-label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.balance-amount {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Add Account Card */
+.add-account-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+  border: 2px dashed #d0d0d0;
+  min-height: 200px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.add-account-card:hover {
+  border-color: #007bff;
+  background: #f0f4ff;
+}
+
+.add-account-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.add-account-btn:hover {
+  color: #007bff;
+}
+
+.plus-icon {
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* New Account Form */
+.new-account-form {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.new-account-form input {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.new-account-form input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.btn-confirm,
+.btn-cancel {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.btn-confirm {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-confirm:hover {
+  background-color: #218838;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
+}
+
+/* Payments Section */
+.payments-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.payments-section h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 0.5rem;
+}
+
+.empty-state {
+  padding: 3rem;
+  text-align: center;
+  color: #999;
+  background: #f9f9f9;
+  border-radius: 0.5rem;
+  border: 1px solid #eee;
+}
+
+/* Filters UI */
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e0e7ef;
+  margin-bottom: 1.5rem;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 150px;
+  flex: 1;
+}
+
+.filter-group label {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  outline: none;
+  background: #fff;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.filter-actions {
+  flex: 0 0 auto;
+}
+
+.btn-filter {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-filter:hover {
+  background: #2563eb;
+}
+
+/* Specific Transaction Buttons */
+.btn-income {
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+.btn-income:hover {
+  background: #059669;
+}
+
+.btn-expense {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+.btn-expense:hover {
+  background: #dc2626;
+}
+
+@media (prefers-color-scheme: dark) {
+  .filters-container {
+    background: #1e293b;
+    border-color: #334155;
+  }
+  .filter-group label {
+    color: #94a3b8;
+  }
+  .filter-group select,
+  .filter-group input {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f1f5f9;
+  }
+}
+
+/* Table Styles */
+.payments-table-wrapper {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.payments-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.payments-table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.payments-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+}
+
+.payments-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.payment-row:hover {
+  background-color: #f9f9f9;
+}
+
+.payment-row.ingreso {
+  border-left: 4px solid #28a745;
+}
+
+.payment-row.egreso {
+  border-left: 4px solid #dc3545;
+}
+
+/* Table Cells */
+.amount-cell {
+  font-weight: 600;
+}
+
+.amount {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.amount.ingreso {
+  color: #28a745;
+}
+
+.amount.egreso {
+  color: #dc3545;
+}
+
+.type-cell {
+  text-align: center;
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.type-badge.ingreso {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.type-badge.egreso {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.bike-cell,
+.date-cell {
+  color: #666;
+}
+
+.description-cell {
+  color: #999;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .balance-view {
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .accounts-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .payments-table {
+    font-size: 0.85rem;
+  }
+
+  .payments-table th,
+  .payments-table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .balance-section h2,
+  .payments-section h2 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .accounts-container {
+    grid-template-columns: 1fr;
+  }
+
+  .payments-table-wrapper {
+    font-size: 0.8rem;
+  }
+
+  .balance-amount {
+    font-size: 1.5rem;
+  }
+}
