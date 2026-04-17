@@ -10,7 +10,7 @@ import "./App.css";
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" basename="/agus" element={<Login />} />
       
       <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>

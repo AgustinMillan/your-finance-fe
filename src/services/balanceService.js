@@ -179,3 +179,30 @@ export const createPayment = async (paymentData) => {
     throw error;
   }
 };
+
+/**
+ * Crea una transferencia entre dos cuentas
+ * @param {Object} transferData - { fromAccountId, toAccountId, amount, date, description }
+ * @returns {Promise<Object>} Resultado de la transferencia
+ */
+export const createTransfer = async (transferData) => {
+  try {
+    const url = getApiUrl(`${BALANCE_ENDPOINTS.PAYMENTS}/transfer`);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(transferData),
+    });
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || `Error al crear transferencia: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error en createTransfer:", error);
+    throw error;
+  }
+};

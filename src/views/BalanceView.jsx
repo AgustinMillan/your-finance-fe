@@ -6,6 +6,7 @@ import {
   updateAccount,
   createPayment,
   updatePayment,
+  createTransfer,
 } from "../services/balanceService";
 import { getCategories } from "../services/categoryService";
 import "./BalanceView.css";
@@ -104,6 +105,78 @@ function BalanceView() {
   });
 
   const [submittingTransaction, setSubmittingTransaction] = useState(false);
+
+  // --- Estados para transferencia de ahorros ---
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [transferMode, setTransferMode] = useState("save"); // "save" = añadir ahorros, "withdraw" = sacar de ahorros
+  const [transferData, setTransferData] = useState({
+    fromAccountId: "",
+    toAccountId: "",
+    amount: "",
+    date: new Date().toISOString().slice(0, 10),
+    description: "",
+  });
+  const [submittingTransfer, setSubmittingTransfer] = useState(false);
+
+  const openTransferModal = (mode) => {
+    setTransferMode(mode);
+    setTransferData({
+      fromAccountId: "",
+      toAccountId: "",
+      amount: "",
+      date: new Date().toISOString().slice(0, 10),
+      description: "",
+    });
+    setShowTransferModal(true);
+  };
+
+  const handleCreateTransfer = async () => {
+    // La cuenta "Ahorros" siempre es una parte fija de la transferencia
+    const ahorrosAccount = accounts.find((a) => a.name === "Ahorros");
+    if (!ahorrosAccount) {
+      setError('No existe una cuenta llamada "Ahorros". Créala primero desde la sección de cuentas.');
+      return;
+    }
+
+    const fromId = transferMode === "save"
+      ? Number(transferData.fromAccountId)   // cuenta del usuario→ahorros
+      : ahorrosAccount.id;                   // ahorros→cuenta del usuario
+
+    const toId = transferMode === "save"
+      ? ahorrosAccount.id
+      : Number(transferData.toAccountId);
+
+    if (!transferData.fromAccountId && transferMode === "save") {
+      setError("Seleccioná la cuenta de origen");
+      return;
+    }
+    if (!transferData.toAccountId && transferMode === "withdraw") {
+      setError("Seleccioná la cuenta destino");
+      return;
+    }
+    if (!transferData.amount) {
+      setError("Ingresá un monto");
+      return;
+    }
+
+    setSubmittingTransfer(true);
+    try {
+      await createTransfer({
+        fromAccountId: fromId,
+        toAccountId: toId,
+        amount: Number(transferData.amount),
+        date: transferData.date,
+        description: transferData.description ||
+          (transferMode === "save" ? "Añadir a ahorros" : "Sacar de ahorros"),
+      });
+      setShowTransferModal(false);
+      await loadData();
+    } catch (err) {
+      setError(err.message || "Error al realizar la transferencia");
+    } finally {
+      setSubmittingTransfer(false);
+    }
+  };
   const handleCreateTransaction = async (type) => {
     setSubmittingTransaction(true);
     try {
@@ -626,17 +699,19 @@ function BalanceView() {
                         ) : (
                           <>
                             <td className="amount-cell">
-                              <span className={`amount ${payment.type}`}>
+                              <span className={`amount ${payment.isTransfer ? "transfer" : payment.type}`}>
                                 {payment.type === "ingreso" ? "+ " : "- "}
                                 {formatCurrency(Math.abs(payment.amount))}
                               </span>
                             </td>
                             <td className="type-cell">
-                              <span className={`type-badge ${payment.type}`}>
-                                {payment.type === "ingreso"
-                                  ? "Ingreso"
-                                  : "Egreso"}
-                              </span>
+                              {payment.isTransfer ? (
+                                <span className="type-badge transfer">🔁 Transferencia</span>
+                              ) : (
+                                <span className={`type-badge ${payment.type}`}>
+                                  {payment.type === "ingreso" ? "Ingreso" : "Egreso"}
+                                </span>
+                              )}
                             </td>
                             <td className="category-cell" style={{color: "black"}}>
                               {categories?.find(c => c.id === payment.categoryId)?.name || "-"}
@@ -646,12 +721,14 @@ function BalanceView() {
                             </td>
                             <td className="description-cell">
                               {payment.description || "-"}
-                              <button
-                                className="btn-edit-transaction"
-                                onClick={() => handleEditPayment(payment)}
-                              >
-                                Editar
-                              </button>
+                              {!payment.isTransfer && (
+                                <button
+                                  className="btn-edit-transaction"
+                                  onClick={() => handleEditPayment(payment)}
+                                >
+                                  Editar
+                                </button>
+                              )}
                             </td>
                           </>
                         )}
@@ -696,6 +773,7 @@ function BalanceView() {
                 onClick={() => {
                   setShowTransactionFormPayment(true);
                   setShowTransactionFormBill(false);
+                  setShowTransferModal(false);
                 }}
               >
                 + CREAR INGRESO
@@ -705,16 +783,38 @@ function BalanceView() {
                 onClick={() => {
                   setShowTransactionFormBill(true);
                   setShowTransactionFormPayment(false);
+                  setShowTransferModal(false);
                 }}
               >
                 - CREAR EGRESO
               </button>
-              {(showTransactionFormPayment || showTransactionFormBill) && (
+              <button
+                className="btn-savings"
+                onClick={() => {
+                  setShowTransactionFormPayment(false);
+                  setShowTransactionFormBill(false);
+                  openTransferModal("save");
+                }}
+              >
+                🏦 AÑADIR AHORROS
+              </button>
+              <button
+                className="btn-withdraw-savings"
+                onClick={() => {
+                  setShowTransactionFormPayment(false);
+                  setShowTransactionFormBill(false);
+                  openTransferModal("withdraw");
+                }}
+              >
+                💸 SACAR DE AHORROS
+              </button>
+              {(showTransactionFormPayment || showTransactionFormBill || showTransferModal) && (
                 <button
                   className="btn-cancel"
                   onClick={() => {
                     setShowTransactionFormPayment(false);
                     setShowTransactionFormBill(false);
+                    setShowTransferModal(false);
                   }}
                 >
                   Cerrar
@@ -1007,6 +1107,141 @@ function BalanceView() {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {/* Modal de transferencia de ahorros */}
+          {showTransferModal && (
+            <div className="transfer-modal-overlay" onClick={() => setShowTransferModal(false)}>
+              <div className="transfer-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="transfer-modal-header">
+                  <span className="transfer-modal-icon">
+                    {transferMode === "save" ? "🏦" : "💸"}
+                  </span>
+                  <h3>
+                    {transferMode === "save" ? "Añadir Ahorros" : "Sacar de Ahorros"}
+                  </h3>
+                  <button className="transfer-modal-close" onClick={() => setShowTransferModal(false)}>✕</button>
+                </div>
+
+                <div className="transfer-modal-body">
+                  <p className="transfer-hint">
+                    {transferMode === "save"
+                      ? "El dinero se moverá desde tu cuenta de origen hacia la cuenta de ahorros."
+                      : "El dinero se moverá desde tu cuenta de ahorros hacia la cuenta destino."
+                    }
+                  </p>
+
+                  <div className="transfer-form-grid">
+                    {/* AÑADIR: usuario elige origen, destino = AHORROS fijo */}
+                    {transferMode === "save" ? (
+                      <>
+                        <label className="transfer-label">
+                          <span>Cuenta origen</span>
+                          <select
+                            value={transferData.fromAccountId}
+                            onChange={(e) => setTransferData({ ...transferData, fromAccountId: e.target.value })}
+                            required
+                          >
+                            <option value="">Seleccionar cuenta...</option>
+                            {accounts.filter((a) => a.name !== "Ahorros").map((acc) => (
+                              <option key={acc.id} value={acc.id}>
+                                {acc.name}{acc.alias ? ` (${acc.alias})` : ""}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+
+                        <div className="transfer-arrow">→</div>
+
+                        <div className="transfer-label">
+                          <span>Destino (fijo)</span>
+                          <div className="transfer-fixed-account">🏦 Ahorros</div>
+                        </div>
+                      </>
+                    ) : (
+                      /* SACAR: origen = AHORROS fijo, usuario elige destino */
+                      <>
+                        <div className="transfer-label">
+                          <span>Origen (fijo)</span>
+                          <div className="transfer-fixed-account">🏦 Ahorros</div>
+                        </div>
+
+                        <div className="transfer-arrow">→</div>
+
+                        <label className="transfer-label">
+                          <span>Cuenta destino</span>
+                          <select
+                            value={transferData.toAccountId}
+                            onChange={(e) => setTransferData({ ...transferData, toAccountId: e.target.value })}
+                            required
+                          >
+                            <option value="">Seleccionar cuenta...</option>
+                            {accounts.filter((a) => a.name !== "Ahorros").map((acc) => (
+                              <option key={acc.id} value={acc.id}>
+                                {acc.name}{acc.alias ? ` (${acc.alias})` : ""}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </>
+                    )}
+
+                    {/* Aviso si no existe la cuenta Ahorros */}
+                    {!accounts.find((a) => a.name === "Ahorros") && (
+                      <p className="transfer-warn" style={{ gridColumn: "1 / -1" }}>
+                        ⚠️ No encontramos una cuenta llamada <strong>"Ahorros"</strong>. Créala desde la sección de cuentas para poder operar.
+                      </p>
+                    )}
+                  </div>
+
+                  <label className="transfer-label">
+                    <span>Monto</span>
+                    <input
+                      type="number"
+                      min="1"
+                      value={transferData.amount}
+                      onChange={(e) => setTransferData({ ...transferData, amount: e.target.value })}
+                      placeholder="0"
+                      required
+                    />
+                  </label>
+
+                  <label className="transfer-label">
+                    <span>Fecha</span>
+                    <input
+                      type="date"
+                      value={transferData.date}
+                      onChange={(e) => setTransferData({ ...transferData, date: e.target.value })}
+                      required
+                    />
+                  </label>
+
+                  <label className="transfer-label">
+                    <span>Descripción (opcional)</span>
+                    <input
+                      type="text"
+                      value={transferData.description}
+                      onChange={(e) => setTransferData({ ...transferData, description: e.target.value })}
+                      placeholder={transferMode === "save" ? "Ej: Ahorro de abril" : "Ej: Retiro para gastos"}
+                      maxLength={100}
+                    />
+                  </label>
+                </div>
+
+                <div className="transfer-modal-footer">
+                  <button
+                    className={transferMode === "save" ? "btn-savings" : "btn-withdraw-savings"}
+                    onClick={handleCreateTransfer}
+                    disabled={submittingTransfer}
+                  >
+                    {submittingTransfer ? "Procesando..." : (transferMode === "save" ? "🏦 Confirmar Ahorro" : "💸 Confirmar Retiro")}
+                  </button>
+                  <button className="btn-cancel" onClick={() => setShowTransferModal(false)}>
+                    Cancelar
+                  </button>
+                </div>
               </div>
             </div>
           )}

@@ -44,6 +44,7 @@ function ReportsView() {
   const [data, setData] = useState({
     totalIncome: 0,
     totalExpense: 0,
+    totalSavings: 0,
     expensesByCategory: [],
   });
   const [loading, setLoading] = useState(true);
@@ -146,6 +147,16 @@ function ReportsView() {
                 <p className="amount">{formatCurrency(data.totalExpense)}</p>
               </div>
             </div>
+
+            {data.totalSavings > 0 && (
+              <div className="summary-card savings-card">
+                <div className="card-icon">🏦</div>
+                <div className="card-details">
+                  <h3>Ahorros del Mes</h3>
+                  <p className="amount">{formatCurrency(data.totalSavings)}</p>
+                </div>
+              </div>
+            )}
 
             <div className={`summary-card balance-card ${netBalance >= 0 ? "positive" : "negative"}`}>
               <div className="card-icon">💰</div>
